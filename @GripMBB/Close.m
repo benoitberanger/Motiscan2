@@ -1,16 +1,16 @@
 function Close( obj )
 
-try 
-
+try
+    
     CloseGripDevice(obj.deviceName, obj.handle)
-
-    fprintf('Connexion closed \n')
-
+    
+    fprintf('Connection closed \n')
+    
 catch err
     
-    fprintf('Connexion NOT closed properly \n')
+    fprintf('Connection NOT closed properly \n')
     warning(err.messge)
     
 end
 
-end
+end % function

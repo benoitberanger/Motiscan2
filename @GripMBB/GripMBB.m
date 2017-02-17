@@ -15,6 +15,7 @@ classdef GripMBB < handle
         
         handle     % pointer to the serial port used by PTB
         
+        
     end % properties
     
     
