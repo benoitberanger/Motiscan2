@@ -26,7 +26,12 @@ classdef GripMBB < handle
         %                           Constructor
         % -----------------------------------------------------------------
         function obj = GripMBB( )
-            % obj = GripMBB( ) % create empty object
+            % obj = GripMBB( deviceName, channels )
+            
+            
+                % Create empty instance
+            end
+            
         end
         
         
