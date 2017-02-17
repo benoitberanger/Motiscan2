@@ -3,7 +3,7 @@ function Close( obj )
 try
     
     CloseGripDevice(obj.deviceName, obj.handle)
-    
+    obj.handle = []; % delete the pointer
     fprintf('Connection closed \n')
     
 catch err

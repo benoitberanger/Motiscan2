@@ -66,17 +66,34 @@ while do
             downLimit = min(nonNanScope);
             limits = 1;
             
+            fprintf('upLimit   = %g \n',upLimit  )
+            fprintf('downLimit = %g \n',downLimit)
+            fprintf(' -- diff  = %g \n',upLimit - downLimit)
+            fprintf('\n')
+            
         elseif any(keyCode(moveUp_upLimit))
             upLimit = upLimit + 1;
+            fprintf('upLimit   = %g \n',upLimit  )
+            fprintf(' -- diff  = %g \n',upLimit - downLimit)
+            fprintf('\n')
             
         elseif any(keyCode(moveDown_upLimit))
             upLimit = upLimit - 1;
+            fprintf('upLimit   = %g \n',upLimit  )
+            fprintf(' -- diff  = %g \n',upLimit - downLimit)
+            fprintf('\n')
             
         elseif any(keyCode(moveUp_downLimit))
             downLimit = downLimit + 1;
+            fprintf('downLimit = %g \n',downLimit)
+            fprintf(' -- diff  = %g \n',upLimit - downLimit)
+            fprintf('\n')
             
         elseif any(keyCode(moveDown_downLimit))
             downLimit = downLimit - 1;
+            fprintf('downLimit = %g \n',downLimit)
+            fprintf(' -- diff  = %g \n',upLimit - downLimit)
+            fprintf('\n')
             
         elseif any(keyCode(esc))
             do = 0;
@@ -99,5 +116,13 @@ while do
     drawnow
     
 end
+
+% Close the figure
+close(get(h,'Parent'))
+
+% Save the values
+obj.upLimit   = upLimit;
+obj.downLimit = downLimit;
+
 
 end % function
