@@ -11,12 +11,15 @@ clear classes
 d='SerialMBB';
 c=2;
 
+fprintf('Initialize \n')
 g=GripMBB()
 
 
 %% Allocate memory for the data stream
 
-% g.DataMemoryAllocation(1e5);
+fprintf('Allocate memory for the data stream \n')
+
+% g.DataMemoryAllocation(5e5);
 g.DataMemoryAllocation();
 g.AssertDataReady
 
@@ -33,6 +36,7 @@ g.AssertReadyToRecord
 
 
 %% Do continuous ADC
+% and plot how long it taks (in ms) to do each ADC
 
 n = 105;
 t = zeros(n,1);
@@ -45,13 +49,14 @@ for i = 1:n
 end
 plot(t)
 
-[Values1, Times1] = g.GetLastADC;
+fprintf('Before ClearEmptyData \n')
+g
 g.ClearEmptyData
-[Values2, Times2] = g.GetLastADC;
-
+fprintf('After ClearEmptyData \n')
+g
 
 %% Close connection
 
 g.Close;
-
+fprintf('After closing the connection \n')
 g

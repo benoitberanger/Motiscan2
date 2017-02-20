@@ -6,7 +6,7 @@ function DataMemoryAllocation( obj , dim )
 % keep it constant.
 
 if nargin < 2
-    dim = 1e5;
+    dim = 5e5;
 end
 
 assert( isscalar(dim) && dim==round(dim) && dim>0, ...
