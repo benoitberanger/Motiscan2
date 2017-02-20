@@ -1,4 +1,9 @@
 function Initialize( obj, deviceName, channels )
+% obj.Initialize( deviceName, channels )
+%
+% Connect to the device according the parameters
+% deviceName = 'UsbCED' | 'SerialMBB' | 'MIE'
+% channels   = 1 | 2 | [ 1 2 ]
 
 %% Check the channels
 

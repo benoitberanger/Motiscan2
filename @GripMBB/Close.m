@@ -1,4 +1,7 @@
 function Close( obj )
+% obj.Close()
+%
+% Try to close the connection to the device
 
 try
     

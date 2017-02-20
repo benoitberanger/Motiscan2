@@ -6,6 +6,8 @@ classdef GripMBB < handle
     
     properties
         
+        timesStamp % when the object is created
+        
         deviceName % 'UsbCED' | 'SerialMBB' | 'MIE'
         channels   % 1 | 2 | [ 1 2 ]
         
@@ -15,7 +17,7 @@ classdef GripMBB < handle
         downLimit  % lower limit => baseline (i.e. the zero)
         
         dim        % dimension : number if lines in the data (after initialization)
-        idx        % index : which line are we in the data
+        idx        % index : which sample(line) are we in the data
         data       % data = zeros(dim,2), where the columns are [ GripValue , TimeStamp ]
         
     end % properties
@@ -30,6 +32,9 @@ classdef GripMBB < handle
         % -----------------------------------------------------------------
         function obj = GripMBB( )
             % obj = GripMBB( ) % create empty object
+            
+            obj.timesStamp = datestr(now);
+            
         end
         
         

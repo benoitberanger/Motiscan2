@@ -1,4 +1,13 @@
 function Calibrate( obj )
+% obj.Calibrate()
+%
+% Open a matlab figure, start reading and plotting data. Press ENTER to
+% save the current Min and Max as downLimit and upLimit
+
+
+% Check
+obj.AssertIsConnected
+
 
 %% Parameters
 
@@ -18,6 +27,19 @@ moveDown_upLimit   = KbName('d');
 moveUp_downLimit   = KbName('r');
 moveDown_downLimit = KbName('f');
 
+fprintf('\n')
+
+fprintf('Press ESCAPE to exit calibration \n')
+fprintf('Press ENTER to exit to setup the current Min=downLmit and Max=upLimit values from the graph\n')
+fprintf('\n')
+
+fprintf('Press E to move UP the Max=upLimit \n')
+fprintf('Press D to move DOWN the Max=upLimit \n')
+fprintf('\n')
+
+fprintf('Press R to move UP the Min=downLmit \n')
+fprintf('Press F to move DOWN the Min=downLmit \n')
+fprintf('\n')
 
 %% Prepare curves, figures, limits
 
@@ -111,6 +133,8 @@ while do
     % Good looking graph
     ylim([0 780])
     xlim([Time(end) Time(1)])
+    xlabel('time (s)')
+    ylabel('ADC a.u.')
     
     % Show the new plots
     drawnow
