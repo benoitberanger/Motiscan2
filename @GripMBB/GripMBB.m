@@ -1,6 +1,12 @@
 classdef GripMBB < handle
-    %GripMBB Class to manipulate easily the grip force designed for MBB
+    %GRIPMBB Class to manipulate easily the grip force designed for MBB
     %team
+    %
+    % See test_GripMBB.m in the same directory for an exemple
+    
+    % Benoît Béranger, CENIR-ICM, 2017
+    % https://github.com/benoitberanger/
+    
     
     %% Properties
     
@@ -34,6 +40,11 @@ classdef GripMBB < handle
             % obj = GripMBB( ) % create empty object
             
             obj.timesStamp = datestr(now);
+            
+            if isempty(which('PsychtoolboxVersion'))
+                warning('GripMBB:Constructor',...
+                    'Cannot find find Psychtoolbox in MATLAB path. Is it correctly installed ?')
+            end
             
         end
         

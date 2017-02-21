@@ -6,57 +6,58 @@ clc
 IOPort('CloseAll')
 clear classes
 
+
 %% Initialize
 
 d='SerialMBB';
 c=2;
 
 fprintf('Initialize \n')
-g=GripMBB()
+obj=GripMBB()
 
 
 %% Allocate memory for the data stream
 
 fprintf('Allocate memory for the data stream \n')
 
-% g.DataMemoryAllocation(5e5);
-g.DataMemoryAllocation();
-g.AssertDataReady
+% obj.DataMemoryAllocation(5e5);
+obj.DataMemoryAllocation();
 
-g
+obj
 
 
 %% Calibrate upLimit and downLimit
 
-g.Initialize(d,c);
-g.AssertIsConnected
-g.Calibrate;
-g.AssertIsCalibrated
-g.AssertReadyToRecord
+obj.Initialize(d,c);
+obj.Calibrate;
+
+obj.DumpData;
 
 
 %% Do continuous ADC
 % and plot how long it taks (in ms) to do each ADC
 
-n = 105;
+n = 128;
 t = zeros(n,1);
 for i = 1:n
-    
     tic
-    [Values, Times] = g.DoADC;
+    [Values, Times] = obj.DoADC;
     t(i) = toc*1000; % ms
-    
 end
+figure('name','time (in ms) to fetch current ADC and save it into obj.data','numbertitle','off')
 plot(t)
+xlabel('ADC number')
+ylabel('time (ms)')
 
 fprintf('Before ClearEmptyData \n')
-g
-g.ClearEmptyData
+obj
+obj.ClearEmptyData
 fprintf('After ClearEmptyData \n')
-g
+obj
+
 
 %% Close connection
 
-g.Close;
+obj.Close;
 fprintf('After closing the connection \n')
-g
+obj

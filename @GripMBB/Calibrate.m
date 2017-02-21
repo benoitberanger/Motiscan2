@@ -6,6 +6,7 @@ function Calibrate( obj )
 
 
 % Check
+obj.AssertDataReady
 obj.AssertIsConnected
 
 
@@ -17,6 +18,8 @@ Window        = 10; % seconds
 
 %% Keys
 
+% Setup keys
+
 KbName('UnifyKeyNames');
 esc                = KbName('escape');
 setup              = KbName('return');
@@ -27,10 +30,17 @@ moveDown_upLimit   = KbName('d');
 moveUp_downLimit   = KbName('r');
 moveDown_downLimit = KbName('f');
 
+correctBaseline    = KbName('b');
+
+moveUp_both        = KbName('t');
+moveDown_both      = KbName('g');
+
+% Print keys usage
+
 fprintf('\n')
 
 fprintf('Press ESCAPE to exit calibration \n')
-fprintf('Press ENTER  to setup the current Min=downLmit and Max=upLimit values from the graph\n')
+fprintf('Press RETURN to setup the current Min=downLmit and Max=upLimit values from the graph\n')
 fprintf('\n')
 
 fprintf('Press E to move UP   the Max=upLimit \n')
@@ -41,17 +51,23 @@ fprintf('Press R to move UP   the Min=downLmit \n')
 fprintf('Press F to move DOWN the Min=downLmit \n')
 fprintf('\n')
 
-%% Prepare curves, figures, limits
+fprintf('Press B to apply baseline correction \n')
+fprintf('\n')
 
-Scope         = nan( round(Window/RefreshPeriod) , 1 ); % Grip Curve
-Time          = zeros(size(Scope));
+fprintf('Press T to move UP   both limits \n')
+fprintf('Press G to move DOWN both limits \n')
+fprintf('\n')
 
-h = axes; % create a figure and save pointer to the graph
-hold on
 
-upLimit   = []; % value of the limit
-downLimit = []; % value of the limit
-limits = 0;     % flag
+%% Prepare curves, figures
+
+Scope = nan( round(Window/RefreshPeriod) , 1 ); % Grip Curve
+Time  = zeros(size(Scope));
+
+h = axes; % create a figure and save a pointer to the graph (to manipulate easily the refresh)
+hold(h,'on')
+
+limits = 0; % its just a flag
 
 
 %% Oscilloscope
@@ -66,7 +82,7 @@ while do
     Time   = circshift(Time ,1);
     
     % Read ADC
-    [Values, Times] = obj.Read;
+    [Values, Times] = obj.DoADC;
     
     % Set the new values inside the vectors
     Scope(1) = Values ;
@@ -84,37 +100,65 @@ while do
         
         if any(keyCode(setup))
             nonNanScope = Scope(~isnan(Scope));
-            upLimit   = max(nonNanScope);
-            downLimit = min(nonNanScope);
+            obj.upLimit   = max(nonNanScope);
+            obj.downLimit = min(nonNanScope);
             limits = 1;
             
-            fprintf('upLimit   = %g \n',upLimit  )
-            fprintf('downLimit = %g \n',downLimit)
-            fprintf(' -- diff  = %g \n',upLimit - downLimit)
+            fprintf('upLimit   = %g \n',obj.upLimit  )
+            fprintf('downLimit = %g \n',obj.downLimit)
+            fprintf(' -- diff  = %g \n',obj.upLimit - obj.downLimit)
             fprintf('\n')
             
         elseif any(keyCode(moveUp_upLimit))
-            upLimit = upLimit + 1;
-            fprintf('upLimit   = %g \n',upLimit  )
-            fprintf(' -- diff  = %g \n',upLimit - downLimit)
+            obj.upLimit = obj.upLimit + 1;
+            fprintf('upLimit   = %g \n',obj.upLimit  )
+            fprintf(' -- diff  = %g \n',obj.upLimit - obj.downLimit)
             fprintf('\n')
             
         elseif any(keyCode(moveDown_upLimit))
-            upLimit = upLimit - 1;
-            fprintf('upLimit   = %g \n',upLimit  )
-            fprintf(' -- diff  = %g \n',upLimit - downLimit)
+            obj.upLimit = obj.upLimit - 1;
+            fprintf('upLimit   = %g \n',obj.upLimit  )
+            fprintf(' -- diff  = %g \n',obj.upLimit - obj.downLimit)
             fprintf('\n')
             
         elseif any(keyCode(moveUp_downLimit))
-            downLimit = downLimit + 1;
-            fprintf('downLimit = %g \n',downLimit)
-            fprintf(' -- diff  = %g \n',upLimit - downLimit)
+            obj.downLimit = obj.downLimit + 1;
+            fprintf('downLimit = %g \n',obj.downLimit)
+            fprintf(' -- diff  = %g \n',obj.upLimit - obj.downLimit)
             fprintf('\n')
             
         elseif any(keyCode(moveDown_downLimit))
-            downLimit = downLimit - 1;
-            fprintf('downLimit = %g \n',downLimit)
-            fprintf(' -- diff  = %g \n',upLimit - downLimit)
+            obj.downLimit = obj.downLimit - 1;
+            fprintf('downLimit = %g \n',obj.downLimit)
+            fprintf(' -- diff  = %g \n',obj.upLimit - obj.downLimit)
+            fprintf('\n')
+            
+        elseif any(keyCode(correctBaseline))
+            fprintf('BEFORE baseline correction : \n')
+            fprintf('upLimit   = %g \n',obj.upLimit  )
+            fprintf('downLimit = %g \n',obj.downLimit)
+            fprintf(' -- diff  = %g \n',obj.upLimit - obj.downLimit)
+            obj.CorrectBaseline(5*60); % roughtly 5 seconds
+            fprintf('AFTER baseline correction (5 sec windows) : \n')
+            fprintf('upLimit   = %g \n',obj.upLimit  )
+            fprintf('downLimit = %g \n',obj.downLimit)
+            fprintf(' -- diff  = %g \n',obj.upLimit - obj.downLimit)
+            fprintf('\n')
+            
+        elseif any(keyCode(moveUp_both))
+            obj.upLimit   = obj.upLimit   + 1;
+            obj.downLimit = obj.downLimit + 1;
+            fprintf('upLimit   = %g \n',obj.upLimit  )
+            fprintf('downLimit = %g \n',obj.downLimit)
+            fprintf(' -- diff  = %g \n',obj.upLimit - obj.downLimit)
+            fprintf('\n')
+            
+        elseif any(keyCode(moveDown_both))
+            obj.upLimit   = obj.upLimit   - 1;
+            obj.downLimit = obj.downLimit - 1;
+            fprintf('upLimit   = %g \n',obj.upLimit  )
+            fprintf('downLimit = %g \n',obj.downLimit)
+            fprintf(' -- diff  = %g \n',obj.upLimit - obj.downLimit)
             fprintf('\n')
             
         elseif any(keyCode(esc))
@@ -126,8 +170,8 @@ while do
     
     % Plot the Up and Down limits, igf they have been setted
     if limits
-        plot(h,[Time(end) Time(1)], [upLimit upLimit],'Color','red')
-        plot(h,[Time(end) Time(1)], [downLimit downLimit],'Color','red')
+        plot(h,[Time(end) Time(1)], [obj.upLimit   obj.upLimit  ],'Color','red')
+        plot(h,[Time(end) Time(1)], [obj.downLimit obj.downLimit],'Color','red')
     end
     
     % Good looking graph
@@ -143,10 +187,6 @@ end
 
 % Close the figure
 close(get(h,'Parent'))
-
-% Save the values
-obj.upLimit   = upLimit;
-obj.downLimit = downLimit;
 
 
 end % function
