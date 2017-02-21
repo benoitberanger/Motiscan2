@@ -28,7 +28,13 @@ end
 newFmax = data(data>obj.upLimit);
 
 if ~isempty(newFmax)
-    obj.upLimit   = max(newFmax);
+    
+    if max(newFmax) >= 767
+        warning('GripMBB:CorrectFmax:NewUpLimitTooHigh',...
+            'The new Fmax is beyond saturation.')
+    end
+    
+    obj.upLimit = max(newFmax);
     fprintf('New Fmax : \n')
     fprintf('upLimit   = %g \n',obj.upLimit  )
     fprintf('downLimit = %g \n',obj.downLimit)
