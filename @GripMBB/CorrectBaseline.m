@@ -1,9 +1,11 @@
 function CorrectBaseline( obj, NrSamples )
 % obj.CorrectBaseline( NrSamples )
 %
-% Compute the mean value over 'NrSamples' and make it the new baseline
+% Compute the minimum value over 'NrSamples' and make it the new baseline
 % value.
 
+
+%% Checkup parameters
 
 if nargin < 2
     NrSamples = 10 * 60; % 10 seconds x 60 samples/second
@@ -14,15 +16,18 @@ assert( isscalar(NrSamples) && NrSamples>0 && NrSamples==round(NrSamples), ...
 
 obj.AssertDataReady
 
+
+%% Baseline correction
+
 if obj.idx >= NrSamples
     
-    newbaseline = round(mean( obj.data( obj.idx-NrSamples+1 : obj.idx , 1 ) ));
+    newbaseline = round(min( obj.data( obj.idx-NrSamples+1 : obj.idx , 1 ) ));
     
     newupLimit = obj.upLimit - obj.downLimit + newbaseline;
     
     if newupLimit > 768
         warning('GripMBB:CorrectBaseline:NewUpLimitTooHigh',...
-            ['According to the new baseline, the new Fmax is byond saturation. \n'...
+            ['According to the new baseline, the new Fmax is beyond saturation. \n'...
             'Baseline correction is not applied. \n'])
     else
         obj.upLimit   = newupLimit;

@@ -4,7 +4,6 @@ close all
 clear
 clc
 IOPort('CloseAll')
-clear classes
 
 
 %% Initialize
@@ -37,7 +36,7 @@ obj.DumpData;
 %% Do continuous ADC
 % and plot how long it taks (in ms) to do each ADC
 
-n = 128;
+n = 256;
 t = zeros(n,1);
 for i = 1:n
     tic

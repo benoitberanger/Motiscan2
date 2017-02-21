@@ -9,7 +9,7 @@ figure
 
 p = plot(...
     obj.data(1:obj.idx,2) - obj.data(1,2) , ... % X
-    obj.data(1:obj.idx,1) ...                   % Y
+    obj.data(1:obj.idx,1)                   ... % Y
     );
 
 % Good looking graph

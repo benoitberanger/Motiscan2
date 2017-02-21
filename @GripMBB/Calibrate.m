@@ -1,8 +1,10 @@
 function Calibrate( obj )
 % obj.Calibrate()
 %
-% Open a matlab figure, start reading and plotting data. Press ENTER to
-% save the current Min and Max as downLimit and upLimit
+% Open a matlab figure, start reading, storing and plotting data.
+% Press ENTER to save the current displayed Min and Max as downLimit and upLimit.
+% Press ESCAPE to quit.
+% Instructions are displayed in the command window for other manipulations
 
 
 % Check
@@ -13,7 +15,7 @@ obj.AssertIsConnected
 %% Parameters
 
 RefreshPeriod = 1/60; % roughtly
-Window        = 10; % seconds
+Window        = 10;   % seconds
 
 
 %% Keys
@@ -138,7 +140,7 @@ while do
             fprintf('upLimit   = %g \n',obj.upLimit  )
             fprintf('downLimit = %g \n',obj.downLimit)
             fprintf(' -- diff  = %g \n',obj.upLimit - obj.downLimit)
-            obj.CorrectBaseline(5*60); % roughtly 5 seconds
+            obj.CorrectBaseline(Window/RefreshPeriod/2); % roughtly 5 seconds
             fprintf('AFTER baseline correction (5 sec windows) : \n')
             fprintf('upLimit   = %g \n',obj.upLimit  )
             fprintf('downLimit = %g \n',obj.downLimit)
@@ -166,6 +168,11 @@ while do
             
         end
         
+    end
+    
+    % Fmax has been exceeded ?
+    if limits
+        obj.CorrectFmax(Window/RefreshPeriod)
     end
     
     % Plot the Up and Down limits, igf they have been setted
